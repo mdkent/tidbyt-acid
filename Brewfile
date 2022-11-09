@@ -1,0 +1,3 @@
+pixlet
+gifcycle
+imagemagick

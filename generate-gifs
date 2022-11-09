@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'erb'
+require 'tempfile'
+
+DB = "source-images/index/images.yaml"
+TEMPLATE = "template/acid.star.erb"
+
+TPL_TEMP = Tempfile.new([$0,'.star'])
+GIF_TEMP = Tempfile.new([$0,'.gif'])
+
+index = YAML.load_file(DB)
+template = File.read(TEMPLATE)
+
+index.each_with_index do |(k,v),i|
+  idx = i+1
+
+  kfile = "#{k}.gif"
+  kpath = "rendered-gifs/#{kfile}"
+
+  if File.exists?(kpath)
+    puts "[#{idx}/#{index.size} images] Found a rendered copy of #{kpath}, skipping"
+  else
+    puts "[#{idx}/#{index.size} images] Rendering #{kpath}"
+
+    File.open(TPL_TEMP, 'w') do |f|
+      f.puts ERB.new(template).result_with_hash(encoded_image: v[:base64], height: v[:height])
+    end
+
+    %x(pixlet render #{TPL_TEMP.path} -o #{GIF_TEMP.path} --gif)
+    if $?.exitstatus > 0
+      puts "pixlet render failed for #{kpath}, but continuing"
+      next
+    end
+
+    %x(gifsicle -O3 --lossy=80 #{GIF_TEMP.path} -o #{kpath})
+    if $?.exitstatus > 0
+      puts "gifsicle optimization failed for #{kpath}, but continuing"
+      next
+    end
+  end
+end
+
+File.unlink(TPL_TEMP)
+File.unlink(GIF_TEMP)

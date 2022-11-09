@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+
+Dir.glob("originals/*.png").each do |f|
+  output = "converted/#{File.basename(f)}"
+
+  unless File.exists?(output)
+    puts "Converting #{f} to 64px wide"
+
+    # Resize for the display
+    %x(convert #{f} -resize 64x png8:#{output})
+  end
+end
+
+index = {}
+
+Dir.glob("converted/*.png").each do |f|
+  puts "Writing #{f} to the index"
+
+  # We need the height to compute the animation
+  height = %x(identify -format "%h" #{f}).chomp.to_i
+
+  # And we need the image data itself
+  base64 = %x(base64 #{f}).chomp
+
+  img = File.basename(f, ".png")
+
+  index[img] = {
+    height: height,
+    base64: base64
+  }
+end
+
+db = "index/images.yaml"
+
+puts "Writing db to #{db}"
+File.open(db, "w") do |f|
+  f.puts index.to_yaml
+end

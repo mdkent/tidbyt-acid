@@ -1,0 +1,47 @@
+load("render.star", "render")
+load("encoding/base64.star", "base64")
+load("animation.star", "animation")
+
+LOGO = base64.decode("""
+<%= encoded_image %>
+""")
+
+DELAY = 50
+
+# we should add a delay here!
+# if the tree contains animated widgets, the resulting animation will run with delay milliseconds per frame.
+
+# add a config file with an array of selected images to build apps for
+
+def main():
+    return render.Root(
+         delay = DELAY,
+         child = scroll(),
+         # Doesn't work here
+         show_full_animation = True,
+    )
+
+def scroll():
+    return animation.Transformation(
+          child = render.Image(src=LOGO, width=64, height=<%= height %>),
+          duration = 140, #  7s (frames * 50ms) use constants -> why is this 9s now?
+          delay = 60,     # +3s (frames * 50ms)
+                          # +3s tidbyt adds at start
+                          # ---
+                          # 15s loop
+
+          direction = "normal",
+          fill_mode = "forwards",
+          keyframes = [
+            animation.Keyframe(
+              percentage = 0.0,
+              transforms = [],
+              curve = "linear",
+            ),
+            animation.Keyframe(
+              percentage = 1.0,
+              transforms = [animation.Translate(0, -<%= height - 32 %>)], # height - 32
+              curve = "linear",
+            ),
+          ],
+        )

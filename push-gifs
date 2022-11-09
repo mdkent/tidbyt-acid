@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+# Pushes 10 random generated gifs
+
+require 'yaml'
+
+DEVICE_ID = ARGV[0]
+
+# Alphanumeric (a-z, A-Z, 0-9)
+APP_PREFIX = "ACID"
+
+# This gives us a 60 rotation without constantly pushing to the API
+APP_COUNT = 4
+
+DB = "source-images/index/images.yaml"
+
+index = YAML.load_file(DB).to_a.shuffle
+
+APP_COUNT.times do |i|
+  k, v = index.pop
+  idx = i+1
+
+  kfile = "#{k}.gif"
+  kpath = "rendered-gifs/#{kfile}"
+
+  if File.exists?(kpath)
+    puts "[#{idx}/#{APP_COUNT}] Found a rendered copy of #{kpath} and pushing it as #{APP_PREFIX}#{idx}"
+  else
+    puts "[#{idx}/#{APP_COUNT}] Missing a rendered copy of #{kpath}, run render-gifs"
+    next
+  end
+
+  puts "[#{idx}/#{APP_COUNT}] Pushing #{kpath} as app #{APP_PREFIX}#{idx}"
+
+  # check for stderr
+  %x(pixlet push --installation-id #{APP_PREFIX}#{idx} "#{DEVICE_ID}" --background #{kpath})
+  if $?.exitstatus > 0
+    puts "pixlet push failed for #{kpath}, but continuing"
+    next
+  end
+
+  # Need to go slow here, too quickly and we risk an OOM reboot on the tidbyt as
+  # it won't free memory from the old gifs in time
+  #
+
+  unless idx == APP_COUNT
+    puts "[#{idx}/#{APP_COUNT}] Waiting 15s so we don't overload the tidbyt"
+    sleep 15
+  end
+end
