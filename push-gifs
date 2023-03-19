@@ -5,6 +5,7 @@
 require 'yaml'
 
 DEVICE_ID = ARGV[0]
+API_TOKEN = ARGV[1]
 
 # Alphanumeric (a-z, A-Z, 0-9)
 APP_PREFIX = "ACID"
@@ -32,8 +33,14 @@ APP_COUNT.times do |i|
 
   puts "[#{idx}/#{APP_COUNT}] Pushing #{kpath} as app #{APP_PREFIX}#{idx}"
 
+  if API_TOKEN
+    token=" --api-token #{API_TOKEN}"
+  else
+    token=""
+  end
+
   # check for stderr
-  %x(pixlet push --installation-id #{APP_PREFIX}#{idx} "#{DEVICE_ID}" --background #{kpath})
+  %x(pixlet push --installation-id #{APP_PREFIX}#{idx} "#{DEVICE_ID}" --background #{kpath}#{token})
   if $?.exitstatus > 0
     puts "pixlet push failed for #{kpath}, but continuing"
     next
