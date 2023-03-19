@@ -4,6 +4,8 @@
 
 require 'yaml'
 
+root_dir = File.dirname(__FILE__)
+
 DEVICE_ID = ARGV[0]
 API_TOKEN = ARGV[1]
 
@@ -13,7 +15,7 @@ APP_PREFIX = "ACID"
 # This gives us a 60 rotation without constantly pushing to the API
 APP_COUNT = 4
 
-DB = "source-images/index/images.yaml"
+DB = File.join(root_dir, "source-images/index/images.yaml")
 
 index = YAML.load_file(DB).to_a.shuffle
 
@@ -22,7 +24,7 @@ APP_COUNT.times do |i|
   idx = i+1
 
   kfile = "#{k}.gif"
-  kpath = "rendered-gifs/#{kfile}"
+  kpath = File.join(root_dir, "rendered-gifs/#{kfile}")
 
   if File.exists?(kpath)
     puts "[#{idx}/#{APP_COUNT}] Found a rendered copy of #{kpath} and pushing it as #{APP_PREFIX}#{idx}"

@@ -42,3 +42,10 @@ The api token is only required if you couldn't run pixlet login.
 
 You can gather both of these from the App in Settings -> General -> Get API Key. The API key is
 brutally long. I'm sorry.
+
+## Cron Example
+
+```
+PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+*/5 * * * * /home/mkent/tidbyt-acid/push-gifs amicably-natty-cat-centipede-149 <giant token> >>/home/mkent/tidbyt-acid/push.log 2>&1
+```
