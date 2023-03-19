@@ -37,3 +37,8 @@ crashing when images were pushed too frequently.
 ```
 ./push-gifs <device id> [api token]
 ```
+
+The api token is only required if you couldn't run pixlet login.
+
+You can gather both of these from the App in Settings -> General -> Get API Key. The API key is
+brutally long. I'm sorry.
