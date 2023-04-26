@@ -31,7 +31,7 @@ for auth. If this is a headless server, just grab your API token via the App in 
 
 # Usage
 
-It's recommend you cron this roughly every 5+ minutes. I've had a number of issue with the Tidbyt
+It's recommend you cron this roughly every 5 or 10 minutes. I've had a number of issue with the Tidbyt
 crashing when images were pushed too frequently.
 
 ```
@@ -47,5 +47,5 @@ brutally long. I'm sorry.
 
 ```
 PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
-*/5 * * * * /home/mkent/tidbyt-acid/push-gifs amicably-natty-cat-centipede-149 <giant token> >>/home/mkent/tidbyt-acid/push.log 2>&1
+*/10 * * * * /home/mkent/tidbyt-acid/push-gifs amicably-natty-cat-centipede-149 <giant token> >>/home/mkent/tidbyt-acid/push.log 2>&1
 ```
