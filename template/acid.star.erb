@@ -6,12 +6,8 @@ LOGO = base64.decode("""
 <%= encoded_image %>
 """)
 
+# delay per frame, in ms
 DELAY = 50
-
-# we should add a delay here!
-# if the tree contains animated widgets, the resulting animation will run with delay milliseconds per frame.
-
-# add a config file with an array of selected images to build apps for
 
 def main():
     return render.Root(
@@ -24,8 +20,8 @@ def main():
 def scroll():
     return animation.Transformation(
           child = render.Image(src=LOGO, width=64, height=<%= height %>),
-          duration = 140, #  7s (frames * 50ms) use constants -> why is this 9s now?
-          delay = 60,     # +3s (frames * 50ms)
+          duration = 140, #  7s (frames * DELAY [ms]) use constants -> why is this 9s now?
+          delay = 60,     # +3s (frames * DELAY [ms])
                           # +3s tidbyt adds at start
                           # ---
                           # 15s loop
